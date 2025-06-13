@@ -1,5 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+.alert {
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    border: 2px solid;
+}
+
+.alert-success {
+    color: #2e7d32;
+    background: #f0fff0;
+    border-color: #4CAF50;
+}
+
+.alert-error {
+    color: #c62828;
+    background: #fff0f0;
+    border-color: #f44336;
+}
+
+.form-card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.employee-id, .password {
+    font-family: monospace;
+    background: #f5f5f5;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.password {
+    background: #19f53e;
+    color: #856404;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -76,7 +113,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 /* Card Styles */
@@ -148,7 +185,7 @@ input, select {
 }
 
 .btn {
-    padding: 10px 25px;
+    padding: 3px 25px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -176,6 +213,7 @@ input, select {
     background: #f39c1230; 
     color: #f39c12; 
 }
+
 
 /* Attendance Section */
 .attendance-header {
@@ -273,3 +311,4 @@ input, select {
     background: rgba(0,0,0,0.5);
     z-index: 999;
 }
+

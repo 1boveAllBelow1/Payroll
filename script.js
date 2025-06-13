@@ -108,13 +108,6 @@ function showAddModal() {
 function hideModal() {
     document.getElementById('incomeaddModal').style.display = 'none';
 }
-
-// Initialize chart when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    initChart();
-    updateDisplay();
-});
-
 // Attendance Section
 let currentDate = new Date();
 let attendanceData = JSON.parse(localStorage.getItem('attendance')) || {};
@@ -217,6 +210,9 @@ function addEmployee(e) {
     document.getElementById('employeePosition').value = '';
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     updateMonthDisplay();
+    initChart();
+    updateDisplay();
 });
