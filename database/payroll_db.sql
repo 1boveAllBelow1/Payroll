@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 09, 2025 at 04:37 PM
+-- Generation Time: Jun 14, 2025 at 11:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `admin` (
-  `admin_id` bigint(20) NOT NULL,
+  `admin_id` int(10) NOT NULL,
   `admin_pass` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -37,7 +37,9 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_id`, `admin_pass`) VALUES
-(202500000001, '2');
+(2025001, ''),
+(1, ''),
+(2025001, '12');
 
 -- --------------------------------------------------------
 
@@ -46,26 +48,44 @@ INSERT INTO `admin` (`admin_id`, `admin_pass`) VALUES
 --
 
 CREATE TABLE `employee` (
-  `employee_id` bigint(20) NOT NULL,
+  `employee_id` int(10) NOT NULL,
   `employee_pass` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `employee`
+-- Table structure for table `employee_credentials`
 --
 
-INSERT INTO `employee` (`employee_id`, `employee_pass`) VALUES
-(25002054029, '1');
+CREATE TABLE `employee_credentials` (
+  `employee_id` int(10) NOT NULL,
+  `full_name` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `mobile_no` int(100) NOT NULL,
+  `branch` varchar(15) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `admin`
+-- Indexes for table `employee_credentials`
 --
-ALTER TABLE `admin`
-  ADD PRIMARY KEY (`admin_id`);
+ALTER TABLE `employee_credentials`
+  ADD PRIMARY KEY (`employee_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `employee_credentials`
+--
+ALTER TABLE `employee_credentials`
+  MODIFY `employee_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2025006;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
