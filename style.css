@@ -7,6 +7,8 @@
     border: 2px solid;
 }
 
+
+
 .alert-success {
     color: #2e7d32;
     background: #f0fff0;
@@ -22,6 +24,12 @@
 .form-card {
     max-width: 600px;
     margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
 .employee-id, .password {

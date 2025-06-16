@@ -62,42 +62,57 @@
 <div class="container">
     <h1>Login</h1>
 
-    <?php
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-    include('connect.php');  
+   <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include('connect.php');  
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $userType = $_POST['user_type']; 
-        $userId = $_POST['user_id'];
-        $userPass = $_POST['user_pass'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $userType = $_POST['user_type']; 
+    $userId = $_POST['user_id'];
+    $userPass = $_POST['user_pass'];
 
-        if ($userType === 'admin') {
-            $stmt = $conn->prepare("SELECT * FROM admin WHERE admin_id = ? AND admin_pass = ?");
-        } else {
-            $stmt = $conn->prepare("SELECT * FROM employee WHERE employee_id = ? AND employee_pass = ?");
-        }
+    session_start();
 
+    if ($userType === 'admin') {
+    
+        $stmt = $conn->prepare("SELECT * FROM admin WHERE admin_id = ? AND admin_pass = ?");
         $stmt->bind_param("is", $userId, $userPass);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 1) {
-            session_start();
-            if ($userType === 'admin') {
-                $_SESSION['admin_id'] = $userId;
-                header("Location: admin.php");
-            } else {
-                $_SESSION['employee_id'] = $userId;
-                header("Location: employee.php");
-            }
+            $_SESSION['admin_id'] = $userId;
+            header("Location: admin.php");
             exit;
         } else {
-            echo "<p style='color: red; text-align:center;'>❌ Invalid ID or password.</p>";
+            echo "<p style='color: red; text-align:center;'>❌ Invalid Admin ID or password.</p>";
+        }
+
+    } else {
+    
+        $stmt = $conn->prepare("SELECT * FROM employee_credentials WHERE employee_id = ?");
+        $stmt->bind_param("s", $userId); 
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
+            $hashedPassword = $row['password'];
+
+            if (password_verify($userPass, $hashedPassword)) {
+                $_SESSION['employee_id'] = $userId;
+                header("Location: employee.php");
+                exit;
+            } else {
+                echo "<p style='color: red; text-align:center;'>❌ Incorrect password.</p>";
+            }
+        } else {
+            echo "<p style='color: red; text-align:center;'>❌ Employee not found.</p>";
         }
     }
-    ?>
-
+}
+?>
     <form method="POST">
         <label class="label">User Type:</label>
         <select name="user_type" required>

@@ -35,15 +35,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $full_name = $_POST['fullName'];
     $email = $_POST['email'];
     $mobile_no = $_POST['mobileNo'];
+    $class = $_POST['class'];
     $branch = $_POST['branch'];
     $employee_id = $newID;
     $hashed_password = password_hash($password_plain, PASSWORD_DEFAULT);
 
     
     $stmt = $conn->prepare("INSERT INTO employee_credentials 
-                            (employee_id, full_name, email, mobile_no, branch, password) 
+                            (employee_id, full_name, email, mobile_no, class, branch, password) 
                             VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssss", $employee_id, $full_name, $email, $mobile_no, $branch, $hashed_password);
+    $stmt->bind_param("sssssss", $employee_id, $full_name, $email, $class, $mobile_no, $branch, $hashed_password);
 
     if ($stmt->execute()) {
         
@@ -81,6 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <li class="menu">
                     <a href="#transactions"><i class="fas fa-exchange-alt"></i> Transactions</a>
                     <ul class="nav-links sub">
+                        <li><a href="#payout">Payout</a></li> 
                         <li><a href="#payoutreport">Payout Report</a></li>
                     </ul>
                 </li>
@@ -137,7 +139,158 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <!-- Transactions Section -->
         <section id="transactions" class="content-section" style="display: none;">
             <h1>Transactions</h1>
+
+                <div style="margin-top: 20px;">
+                     <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                            <thead style="background-color: #f2f2f2;">
+                                <tr>
+                                    <th>Employee ID</th>
+                                    <th>Base Salary (₱)</th>
+                                    <th>SSS Deduction (₱)</th>
+                                    <th>PhilHealth Deduction (₱)</th>
+                                    <th>PAG-IBIG Deduction (₱)</th>
+                                    <th>Taxable Income (₱)</th>
+                                    <th>Tax (₱)</th>
+                                    <th>Net Income (₱)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="display-employee-id">—</td>
+                                    <td id="display-base-salary">0.00</td>
+                                    <td id="display-sss">0.00</td>
+                                    <td id="display-philhealth">0.00</td>
+                                    <td id="display-pagibig">400.00</td>
+                                    <td id="taxable-income">0.00</td>
+                                    <td id="tax">0.00</td>
+                                    <td id="net-income">0.00</td>
+                               </tr>
+                         </tbody>
+                    </table>
+               </div>
         </section>
+
+
+<section id="payout" class="content-section">
+  <h1>Payout</h1>
+
+  <form method="POST" action="employee_salary.php" id="payoutForm">
+    <div style="
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+      ">
+      <div style="
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        ">
+
+        
+        <div>
+          <label for="month" style="font-weight: bold;">Month</label>
+          <select id="month" name="month" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+            <option value="">Select Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+
+        
+        <div>
+          <label for="year" style="font-weight: bold;">Year</label>
+          <select id="year" name="year" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+            <option value="">Select Year</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
+      
+        <div>
+          <label for="employee" style="font-weight: bold;">Employee</label>
+          <select id="employee" name="employee" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+            <option value="">Select Employee</option>
+            <?php
+              include 'connect.php';
+              $result = $conn->query("SELECT employee_id FROM employee_credentials");
+              while ($row = $result->fetch_assoc()) {
+                  $id = htmlspecialchars($row['employee_id']);
+                  echo "<option value='$id'>$id</option>";
+              }
+            ?>
+          </select>
+        </div>
+
+        <div>
+          <label for="class" style="font-weight: bold;">Class</label>
+          <select id="class" name="class" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-top: 5px;">
+            <option value="">Select Class</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </select>
+        </div>
+
+            <button type="button" onclick="previewSalary()" style="margin-top: 20px; background: #3498db; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer;">
+                Select
+                </button>
+    
+      </div>
+
+    
+      <input type="hidden" name="base_salary" id="base_salary">
+      <input type="hidden" name="sss_deduction" id="sss_deduction">
+      <input type="hidden" name="philhealth_deduction" id="philhealth_deduction">
+      <input type="hidden" name="pagibig_deduction" id="pagibig_deduction">
+      <input type="hidden" name="taxable_income" id="taxable_income">
+      <input type="hidden" name="tax" id="tax">
+      <input type="hidden" name="net_income" id="net_income">
+     
+    </div>
+  </form>
+
+
+
+  <div style="margin-top: 40px; overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+      <thead style="background:rgb(117, 148, 179); color: white;">
+        <tr>
+          <th style="padding: 12px;">Employee ID</th>
+          <th style="padding: 12px;">Class</th>
+          <th style="padding: 12px;">Base Salary</th>
+          <th style="padding: 12px;">SSS</th>
+          <th style="padding: 12px;">PhilHealth</th>
+          <th style="padding: 12px;">Pag-IBIG</th>
+          <th style="padding: 12px;">Taxable Income</th>
+          <th style="padding: 12px;">Tax</th>
+          <th style="padding: 12px;">Net Income</th>
+          <th style="padding: 12px;">Payroll Date</th>
+          <th style="padding: 12px;">Action</th>
+        </tr>
+      </thead>
+     <tbody id="salaryPreviewBody">
+
+       
+      </tbody>
+    </table>
+  </div>
+</section>
+
         
         <!-- Payout Report Section -->
         <section id="payoutreport" class="content-section" style="display: none;">
@@ -190,6 +343,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </table>
             </div>
         </section>
+       
+   
         
        
         <section id="employees" class="content-section" style="display: none;">
@@ -264,6 +419,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <option value="Marketing">Marketing</option>
                         </select>
                     </div>
+                    <div class= "form-group">
+                        <label for="class">Class</label>
+                        <select id= "class" name="class" required>
+                                <option value="">Select Class</option>
+                                <option value="1">I</option>
+                                <option value="2">II</option>
+                                <option value="3">III</option>
+                        </select>
+                    </div>
                     
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
@@ -303,6 +467,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 echo "<td>" . htmlspecialchars($row['full_name']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['email']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['mobile_no']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['branch']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['branch']) . "</td>";
                                 echo "<td>
                                         <form method='POST' action='remove_employee.php' class='inline-form' 
@@ -494,6 +659,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <!-- Add Class Section -->
         <section id="addclass" class="content-section" style="display: none;">
             <h1>Add Class</h1>
+
+
+        <form id="addSalaryForm" action="add_class.php" method="POST">
+                <label for="className">Class Name</label>
+                <input type="text" id="className" name="className" required>
+
+                <label for="Salary">Salary</label>
+                <input type="number" id="Salary" name="Salary" required>
+
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </form>
+
         </section>
     </div>
 
@@ -552,6 +729,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </script>
 
     <?php $conn->close(); ?>
-
+    <script src="calculation.js"></script>   
 </body>
+
 </html>

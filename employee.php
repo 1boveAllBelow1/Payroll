@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee - Payroll System</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="employee-style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
             <li><a href="#leave-report"><i class="fas fa-clipboard-list"></i> Leave Report</a></li>
             <li><a href="#salary-report"><i class="fas fa-chart-line"></i> Salary Report</a></li>
             <li><a href="#change-password"><i class="fas fa-key"></i> Change Password</a></li>
-            <li><a href="#logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
@@ -291,6 +291,39 @@
         </div>
     </div>
 
-    <script src="employee-script.js"></script>
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const links = document.querySelectorAll(".nav-links a");
+                const sections = document.querySelectorAll(".content-section");
+
+                links.forEach(link => {
+                    link.addEventListener("click", function (e) {
+                        const href = this.getAttribute("href");
+                        if (!href.startsWith("#")) return; 
+                        e.preventDefault();
+                        
+                        sections.forEach(section => section.style.display = "none");
+
+                        
+                        const targetId = this.getAttribute("href").substring(1);
+                        const targetSection = document.getElementById(targetId);
+
+                        
+                        if (targetSection) {
+                            targetSection.style.display = "block";
+                        }
+
+                        
+                        links.forEach(l => l.classList.remove("active"));
+                        this.classList.add("active");
+                    });
+                });
+
+                
+                document.querySelector('a[href="#account-summary"]').click();
+            });
+</script>
+
+    
 </body>
 </html>

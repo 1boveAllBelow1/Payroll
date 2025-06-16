@@ -1,14 +1,5 @@
 
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetSection = this.getAttribute('href');
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.style.display = 'none';
-        });
-        document.querySelector(targetSection).style.display = 'block';
-    });
-});
+
 
 
 let incomeData = JSON.parse(localStorage.getItem('income')) || [];

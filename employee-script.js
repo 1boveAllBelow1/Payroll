@@ -56,6 +56,8 @@ function initializeNavigation() {
             
             navLinks.forEach(navLink => navLink.classList.remove('active'));
             this.classList.add('active');
+
+            
         });
     });
 
